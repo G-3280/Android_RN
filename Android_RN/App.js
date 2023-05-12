@@ -48,6 +48,7 @@ import DetailScreen from './screens/DetailScreen';
 import MissionScreen from './screens/MissionScreen';
 
 import LoginScreen from './screens/LoginScreen.js';
+import SignUpScreen from './screens/SignUpScreen.js';
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -71,13 +72,14 @@ function MyTabs(){
 const App = () => {
     return(
         <NavigationContainer>
-            <Stack.Navigator initialRouteName="Mission">
+            <Stack.Navigator initialRouteName="Login">
                 <Stack.Screen name="Home" component={HomeScreen} options={{ headerShown: false }} />
                 <Stack.Screen name="Mission" component={MissionScreen} options={{ headerShown: false }} />
                 <Stack.Screen name="Evaluation" component={EvaluationScreen} options={{ headerShown: false }} />
                 <Stack.Screen name="Setting" component={SettingScreen} options={{ headerShown: false }}/>
 
                 <Stack.Screen name="Login" component={LoginScreen} options={{ headerShown: false }} />
+                <Stack.Screen name="SignUp" component={SignUpScreen} options={{headerShown: false}} />
 
                 <Stack.Screen name="Detail" component={DetailScreen} />
             </Stack.Navigator>

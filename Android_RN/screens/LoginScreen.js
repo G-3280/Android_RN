@@ -19,6 +19,8 @@ import {
   Alert,
 } from 'react-native';
 
+import {signIn} from "../lib/auth";
+
 const styles = StyleSheet.create({
     container: {
         flex: 1,
@@ -36,7 +38,6 @@ const styles = StyleSheet.create({
         borderRadius: 15,
         borderColor: '#DBD9D9',
         color: "black",
-        placeholderTextColor: "#DBD9D9",
     },
 
     loginButton: {
@@ -57,28 +58,44 @@ const styles = StyleSheet.create({
 });
 
 function LoginScreen ({navigation}){
-    const [id, setId] = useState('');
+    const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
 
-    const handleLogin = () => {
-        console.log(id, password);
-        Alert.alert(
-            '로그인',
-            '로그인 성공!',
-            [
-                {text: '확인', onPress: () => {navigation.navigate("Home")}}
-            ]
+    const handleLogin = async () => {
+        console.log(email, password);
+        const info = {email, password};
 
-        );
+        try{
+            const {user} = await signIn(info);
+            console.log(user);
+            Alert.alert(
+                '로그인',
+                '로그인 성공!',
+                [
+                    {text: '확인', onPress: () => {navigation.navigate("Home")}}
+                ]
+
+            );
+        } catch(e){
+            Alert.alert(
+                '로그인',
+                '로그인 실패하였습니다.',
+                [
+                    {text: '확인', onPress: () => {navigation.navigate("Login")}}
+                ]
+
+            );
+        }
+
     };
 
     return(
         <View style={styles.container}>
             <TextInput
                 style={styles.input}
-                onChangeText={setId}
-                value={id}
-                placeholder="아이디를 입력하세요"
+                onChangeText={setEmail}
+                value={email}
+                placeholder="이메일을 입력하세요"
                 keyboardType="email-address"
             />
 
