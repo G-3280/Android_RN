@@ -1,12 +1,4 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
- * @format
- * @flow strict-local
- */
-
-import React from 'react';
+import React, {Component} from 'react';
 import type {Node} from 'react';
 import {
   SafeAreaView,
@@ -16,6 +8,13 @@ import {
   Text,
   useColorScheme,
   View,
+  Button,
+  Image,
+  ImageBackground,
+  Dimensions,
+  Platform,
+  Animated,
+  TouchableOpacity,
 } from 'react-native';
 
 import {
@@ -26,87 +25,66 @@ import {
   ReloadInstructions,
 } from 'react-native/Libraries/NewAppScreen';
 
-const Section = ({children, title}): Node => {
-  const isDarkMode = useColorScheme() === 'dark';
-  return (
-    <View style={styles.sectionContainer}>
-      <Text
-        style={[
-          styles.sectionTitle,
-          {
-            color: isDarkMode ? Colors.white : Colors.black,
-          },
-        ]}>
-        {title}
-      </Text>
-      <Text
-        style={[
-          styles.sectionDescription,
-          {
-            color: isDarkMode ? Colors.light : Colors.dark,
-          },
-        ]}>
-        {children}
-      </Text>
-    </View>
-  );
-};
+import {NavigationContainer} from '@react-navigation/native';
+import { createStackNavigator } from '@react-navigation/stack';
+import 'react-native-gesture-handler';
 
-const App: () => Node = () => {
-  const isDarkMode = useColorScheme() === 'dark';
+import Ionicons from 'react-native-vector-icons/Ionicons';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
-  const backgroundStyle = {
-    backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
-  };
 
-  return (
-    <SafeAreaView style={backgroundStyle}>
-      <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} />
-      <ScrollView
-        contentInsetAdjustmentBehavior="automatic"
-        style={backgroundStyle}>
-        <Header />
-        <View
-          style={{
-            backgroundColor: isDarkMode ? Colors.black : Colors.white,
-          }}>
-          <Section title="Step One">
-            Edit <Text style={styles.highlight}>App.js</Text> to change this
-            screen and then come back to see your edits.
-          </Section>
-          <Section title="See Your Changes">
-            <ReloadInstructions />
-          </Section>
-          <Section title="Debug">
-            <DebugInstructions />
-          </Section>
-          <Section title="Learn More">
-            Read the docs to discover what to do next:
-          </Section>
-          <LearnMoreLinks />
-        </View>
-      </ScrollView>
-    </SafeAreaView>
-  );
-};
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 
-const styles = StyleSheet.create({
-  sectionContainer: {
-    marginTop: 32,
-    paddingHorizontal: 24,
-  },
-  sectionTitle: {
-    fontSize: 24,
-    fontWeight: '600',
-  },
-  sectionDescription: {
-    marginTop: 8,
-    fontSize: 18,
-    fontWeight: '400',
-  },
-  highlight: {
-    fontWeight: '700',
-  },
-});
+
+import panda from './assets/images/RedpandaCard.png';
+
+import TapButton from './screens/TapButton';
+import ProgressBar from './screens/ProgressBar';
+
+import HomeScreen from './screens/HomeScreen.js';
+import SettingScreen from './screens/SettingScreen';
+import EvaluationScreen from './screens/EvaluationScreen';
+import DetailScreen from './screens/DetailScreen';
+import MissionScreen from './screens/MissionScreen';
+
+import LoginScreen from './screens/LoginScreen.js';
+import SignUpScreen from './screens/SignUpScreen.js';
+
+const Stack = createStackNavigator();
+const Tab = createBottomTabNavigator();
+
+const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
+
+
+
+function MyTabs(){
+    return(
+        <Tab.Navigator>
+            <Tab.Screen name="Home" component={HomeScreen} />
+            <Tab.Screen name="Mission" component={MissionScreen} />
+            <Tab.Screen name="Evaluation" component={EvaluationScreen} />
+            <Tab.Screen name="Setting" component={SettingScreen} />
+        </Tab.Navigator>
+    )
+}
+
+
+const App = () => {
+    return(
+        <NavigationContainer>
+            <Stack.Navigator initialRouteName="Login">
+                <Stack.Screen name="Home" component={HomeScreen} options={{ headerShown: false }} />
+                <Stack.Screen name="Mission" component={MissionScreen} options={{ headerShown: false }} />
+                <Stack.Screen name="Evaluation" component={EvaluationScreen} options={{ headerShown: false }} />
+                <Stack.Screen name="Setting" component={SettingScreen} options={{ headerShown: false }}/>
+
+                <Stack.Screen name="Login" component={LoginScreen} options={{ headerShown: false }} />
+                <Stack.Screen name="SignUp" component={SignUpScreen} options={{headerShown: false}} />
+
+                <Stack.Screen name="Detail" component={DetailScreen} />
+            </Stack.Navigator>
+        </NavigationContainer>
+    )
+}
 
 export default App;
