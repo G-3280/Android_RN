@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "302327349528",
+    "project_id": "g-3280-project",
+    "storage_bucket": "g-3280-project.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:302327349528:android:765cf152c61113a3cfde6d",
+        "android_client_info": {
+          "package_name": "com.android_rn"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "302327349528-244tcbfa7di54d3s6pgi55emuhb8jk8r.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDamDmBGH5Y8wm52TZXgQKFIzbCcjXIvKI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "302327349528-244tcbfa7di54d3s6pgi55emuhb8jk8r.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "302327349528-v8d5dvnlst4qjpvi4jjvo5bjr1cugqo0.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.Niro.G-3280"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
