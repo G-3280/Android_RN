@@ -17,6 +17,7 @@ import {
   TouchableOpacity,
 } from 'react-native';
 
+import Card from '../components/Home/Card';
 import panda from '../assets/images/RedpandaCard.png';
 import auth from '@react-native-firebase/auth';
 import firebase from "@react-native-firebase/app";
@@ -88,6 +89,7 @@ function HomeScreen({navigation, route}){
 
     let cardName = [
         {
+            'species': 'redPanda',
             'nickname': '호',
             'name': '레서판다',
             'explanation': `황제펭귄(Aptenodytes forsteri)은 지구상에 생존하는 모든 펭귄들 중에서 가장 키가 크고 체중이 많이 나가는 종이다.
@@ -95,6 +97,7 @@ function HomeScreen({navigation, route}){
 서식지는 남극과 포클랜드 제도이다. 암컷과 수컷은 덩치와 깃털 무늬가 비슷하며, 성체는 최고 120센티미터에 몸무게는 23~45킬로그램까지 나간다. 등은 검고 가슴 부위는 창백한 노란색을 띠고 있으며 귀 부위는 밝은 노란색이다. 다른 펭귄들과 마찬가지로 황제펭귄은 날지 못한다. 이들은 해양 생활에 적합한 유선형의 몸매와 플리퍼(flipper)로 불리는 납작한 날개를 갖고 있다.`
         },
         {
+            'species': 'penguin',
             'nickname': '뽀',
             'name': '황제펭귄',
             'explanation': `황제펭귄(Aptenodytes forsteri)은 지구상에 생존하는 모든 펭귄들 중에서 가장 키가 크고 체중이 많이 나가는 종이다.
@@ -102,6 +105,7 @@ function HomeScreen({navigation, route}){
 서식지는 남극과 포클랜드 제도이다. 암컷과 수컷은 덩치와 깃털 무늬가 비슷하며, 성체는 최고 120센티미터에 몸무게는 23~45킬로그램까지 나간다. 등은 검고 가슴 부위는 창백한 노란색을 띠고 있으며 귀 부위는 밝은 노란색이다. 다른 펭귄들과 마찬가지로 황제펭귄은 날지 못한다. 이들은 해양 생활에 적합한 유선형의 몸매와 플리퍼(flipper)로 불리는 납작한 날개를 갖고 있다.`
         },
         {
+            'species': 'koala',
             'nickname': '코',
             'name': '코알라',
             'explanation': `황제펭귄(Aptenodytes forsteri)은 지구상에 생존하는 모든 펭귄들 중에서 가장 키가 크고 체중이 많이 나가는 종이다.
@@ -111,6 +115,7 @@ function HomeScreen({navigation, route}){
     ];
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [nickname, setNickname] = useState('');
+    const [completedCard, setCompletedCard] = useState([]);
 
     useEffect(() => {
         const currentUser = firebase.auth().currentUser;
@@ -120,16 +125,24 @@ function HomeScreen({navigation, route}){
             navigation.navigate("Login");
           } else {
             setIsLoggedIn(true);
-            console.log("로그인 상태인데 닉네임 없음");
           }
     }, [firebase.auth().currentUser]);
 
     useEffect(() => {
-
       const updateUserInfo = async () => {
         if (route.params) {
           console.log(route.params);
           setNickname(route.params.nickname);
+
+          if(route.params.card.length !== 0 && completedCard.length === 0){
+              let minCard = route.params.card;
+              minCard.forEach((card, index) => {
+                const matchingIndex = cardName.findIndex((cardInfo) => card === cardInfo.species);
+                if (matchingIndex !== -1) {
+                  setCompletedCard((prevCompletedCard) => [...prevCompletedCard, matchingIndex]);
+                }
+              });
+          }
           setIsLoggedIn(true);
         }
       };
@@ -137,7 +150,7 @@ function HomeScreen({navigation, route}){
       updateUserInfo();
     }, [route.params]);
 
-    console.log(nickname);
+    console.log(completedCard);
     const checkLoggedIn = () => {
         auth().onAuthStateChanged((user) => {
             if (user) {
@@ -176,65 +189,14 @@ function HomeScreen({navigation, route}){
                 indicatorStyle='black'
                 contentContainerStyle={styles.card_scroll}
             >
-            <TouchableOpacity onPress={() =>{navigation.navigate("Detail", {
-                nickName: cardName[0].nickname,
-                name: cardName[0].name,
-                explanation: cardName[0].explanation,
-            })}}>
-                <ImageBackground
-                    source={panda}
-                    style={styles.image}
-                    imageStyle={{borderRadius: 20}}
-                >
-                    <View style={styles.ImgTextContainer}>
-                        <Text style={styles.ImgTextName}>{cardName[0].nickname}</Text>
-                        <View style={styles.ImgText}>
-                            {cardName[0].name
-                                .split('')
-                                .map((char, index) => <Text style={styles.ImgTextGen} key={index}>{char}</Text>)}
-                        </View>
-                    </View>
-                </ImageBackground>
-            </TouchableOpacity>
 
-            <TouchableOpacity onPress={() =>{navigation.navigate("Detail", {
-                nickName: cardName[1].nickname
 
-            })}}>
-                <ImageBackground
-                    source={panda}
-                    style={styles.image}
-                    imageStyle={{borderRadius: 20}}
-                >
-                    <View style={styles.ImgTextContainer}>
-                        <Text style={styles.ImgTextName}>{cardName[1].nickname}</Text>
-                        <View style={styles.ImgText}>
-                            {cardName[1].name
-                                .split('')
-                                .map((char, index) => <Text style={styles.ImgTextGen} key={index}>{char}</Text>)}
-                        </View>
-                    </View>
-                </ImageBackground>
-            </TouchableOpacity>
+            {completedCard
+                .map((c, i) => (
+                    <Card navigation={navigation} cardIdx={c} key={i}/>
+                ))
+            }
 
-            <TouchableOpacity onPress={() =>{navigation.navigate("Detail", {
-                nickName: cardName[2].nickname
-            })}}>
-                <ImageBackground
-                    source={panda}
-                    style={styles.image}
-                    imageStyle={{borderRadius: 20}}
-                >
-                    <View style={styles.ImgTextContainer}>
-                        <Text style={styles.ImgTextName}>{cardName[2].nickname}</Text>
-                        <View style={styles.ImgText}>
-                            {cardName[2].name
-                                .split('')
-                                .map((char, index) => <Text style={styles.ImgTextGen} key={index}>{char}</Text>)}
-                        </View>
-                    </View>
-                </ImageBackground>
-            </TouchableOpacity>
             </ScrollView>
 
         </View>

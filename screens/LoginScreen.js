@@ -74,11 +74,14 @@ function LoginScreen ({navigation}){
         try{
             const {user} = await signIn(info);
             const data = await usersCollection.get();
+
             console.log(user);
             // 닉네임 추출
             let userData = data._docs
                 .filter(doc => email == doc._data.userEmail);
+            console.log(userData);
             let nickname = userData[0]._data.userName;
+            let completedCard = userData[0]._data.completedCard;
 
             setIsLoggedIn(true);
             setEmail('');
@@ -89,7 +92,8 @@ function LoginScreen ({navigation}){
                 '로그인 성공!',
                 [
                     {text: '확인', onPress: () => {navigation.navigate("Home", {
-                        nickname: nickname
+                        nickname: nickname,
+                        card: completedCard,
                     })}}
                 ]
 
