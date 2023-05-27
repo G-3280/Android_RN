@@ -61,30 +61,46 @@ const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
 function MyTabs(){
     return(
         <Tab.Navigator>
+            <Tab.Screen name="Home" component={HomeScreen} options={{ headerShown: false }}  />
+            <Tab.Screen name="Mission" component={MissionScreen} options={{ headerShown: false }}  />
+            <Tab.Screen name="Evaluation" component={EvaluationScreen} options={{ headerShown: false }}  />
+            <Tab.Screen name="Setting" component={SettingScreen} options={{ headerShown: false }}  />
+        </Tab.Navigator>
+    );
+};
+
+const BottomTabNavigator = () => {
+    return (
+        <Tab.Navigator>
             <Tab.Screen name="Home" component={HomeScreen} />
             <Tab.Screen name="Mission" component={MissionScreen} />
             <Tab.Screen name="Evaluation" component={EvaluationScreen} />
             <Tab.Screen name="Setting" component={SettingScreen} />
         </Tab.Navigator>
-    );
-};
+    )
+}
+
+const RootNavigator = () => {
+    return (
+        <Stack.Navigator>
+            <Stack.Screen name="Root" component={BottomTabNavigator} options={{ headerShown: false }} />
+
+            <Stack.Screen name="Login" component={LoginScreen} options={{ headerShown: false }} />
+            <Stack.Screen name="SignUp" component={SignUpScreen}  />
+            <Stack.Screen name="SignUpCompeleteScreen" component={SignUpCompeleteScreen} options={{headerShown: false}} />
+
+            <Stack.Screen name="Detail" component={DetailScreen} />
+
+        </Stack.Navigator>
+    )
+}
+
 
 
 const App = () => {
     return(
         <NavigationContainer>
-            <Stack.Navigator initialRouteName="Setting">
-                <Stack.Screen name="Home" component={HomeScreen} options={{ headerShown: false }} />
-                <Stack.Screen name="Mission" component={MissionScreen} options={{ headerShown: false }} />
-                <Stack.Screen name="Evaluation" component={EvaluationScreen} options={{ headerShown: false }} />
-                <Stack.Screen name="Setting" component={SettingScreen} options={{ headerShown: false }}/>
-
-                <Stack.Screen name="Login" component={LoginScreen} options={{ headerShown: false }} />
-                <Stack.Screen name="SignUp" component={SignUpScreen}  />
-                <Stack.Screen name="SignUpCompeleteScreen" component={SignUpCompeleteScreen} options={{headerShown: false}} />
-
-                <Stack.Screen name="Detail" component={DetailScreen} />
-            </Stack.Navigator>
+            <RootNavigator/>
         </NavigationContainer>
     )
 }
