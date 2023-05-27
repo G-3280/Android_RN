@@ -20,6 +20,7 @@ import {
 } from 'react-native';
 
 import firebase from "@react-native-firebase/app";
+import firestore, {doc} from '@react-native-firebase/firestore';
 
 import water from '../assets/images/mission/water.png';
 import Tiger from '../assets/images/tiger.png';
@@ -116,24 +117,49 @@ const styles = StyleSheet.create({
 })
 
 function SettingScreen({navigation}){
-    const userName = '문해빈';
+    const [userName, setUserName] = useState('');
 
+    const [totalMission, setTotalMission] = useState(20);
+    const [completedMission, setCompletedMissioin] = useState(5);
+
+    const [userData, setUserData] = useState({});
+    const [cardLength, setCardLength] = useState(0);
     const [isLoggedIn, setIsLoggedIn] = useState(false);
 
+    const currentUser = firebase.auth().currentUser;
+
+    console.log('currentUser ');
+    console.log(currentUser);
+
     useEffect(() => {
-        const currentUser = firebase.auth().currentUser;
-        console.log(currentUser);
           if (currentUser === null) {
             setIsLoggedIn(false);
             navigation.navigate("Login");
           } else {
             setIsLoggedIn(true);
-            console.log("로그인 상태인데 닉네임 없음");
+            const uid = currentUser.uid;
+            const usersCollection = firestore().collection('users');
+            usersCollection.doc(uid).get()
+              .then((doc) => {
+                if (doc.exists) {
+                  // 문서가 존재하는 경우 데이터에 접근
+                  const data = doc.data();
+                  console.log(data);
+                  setUserData(data);
+                  setCardLength(data.completedCard.length);
+                } else {
+                  // 문서가 존재하지 않는 경우
+                  console.log('문서가 존재하지 않습니다.');
+                }
+              })
+              .catch((error) => {
+                console.log('문서 가져오기 오류:', error);
+              });
+            console.log(usersCollection);
           }
-    }, [firebase.auth().currentUser]);
+    }, [currentUser]);
 
-    const [totalMission, setTotalMission] = useState(20);
-    const [completedMission, setCompletedMissioin] = useState(5);
+
 
     const onHandleLogout = async (e) => {
         const user = await firebase.auth().currentUser;
@@ -154,7 +180,7 @@ function SettingScreen({navigation}){
     return (
         <View style={styles.container}>
             <View style={styles.settingTop}>
-                <Text style={styles.nameText}>{userName} 님</Text>
+                <Text style={styles.nameText}>{userData.userName} 님</Text>
                 <TouchableOpacity onPress={onHandleLogout}>
                     <Text style={styles.logoutText}>로그아웃</Text>
                 </TouchableOpacity>
@@ -172,9 +198,9 @@ function SettingScreen({navigation}){
                 <View style={styles.historyContainer}>
                     <Text style={styles.historyText}>히스토리</Text>
                     <View style={styles.historyImageContainer}>
-                          <SettingHistory source={mission} completed={10} contentText={'미션 완료'}/>
-                          <SettingHistory source={card} completed={5} contentText={'획득한 카드'}/>
-                          <SettingHistory source={evaluation} completed={7} contentText={'평가 완료'}/>
+                          <SettingHistory source={mission} completed={userData.completedMission} contentText={'미션 완료'}/>
+                          <SettingHistory source={card} completed={cardLength} contentText={'획득한 카드'}/>
+                          <SettingHistory source={evaluation} completed={userData.completedEvaluation} contentText={'평가 완료'}/>
                     </View>
                 </View>
 

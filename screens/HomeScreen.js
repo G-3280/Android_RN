@@ -120,11 +120,13 @@ function HomeScreen({navigation, route}){
     useEffect(() => {
         const currentUser = firebase.auth().currentUser;
         console.log(currentUser);
-          if (currentUser === null) {
+          if (currentUser !== null) {
+            setIsLoggedIn(true);
+
+          } else {
             setIsLoggedIn(false);
             navigation.navigate("Login");
-          } else {
-            setIsLoggedIn(true);
+            setNickname("");
           }
     }, [firebase.auth().currentUser]);
 
@@ -159,6 +161,8 @@ function HomeScreen({navigation, route}){
             } else {
                 setIsLoggedIn(false)
                 console.log("loggedOut")
+                navigation.navigate("Login");
+                setNickname("");
             }
         }
         )
@@ -179,7 +183,7 @@ function HomeScreen({navigation, route}){
 
                 <View style={styles.cardText}>
                     <Text style={styles.collectText}>모은 캐릭터 카드
-                        <Text style={{ color: '#A6A4A4', fontSize: 16, fontWeight: 'normal'}}> ({cardName.length})</Text>
+                        <Text style={{ color: '#A6A4A4', fontSize: 16, fontWeight: 'normal'}}> ({completedCard.length})</Text>
                     </Text>
                 </View>
             </View>
@@ -191,7 +195,7 @@ function HomeScreen({navigation, route}){
             >
 
 
-            {completedCard
+            {isLoggedIn && completedCard
                 .map((c, i) => (
                     <Card navigation={navigation} cardIdx={c} key={i}/>
                 ))
