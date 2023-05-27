@@ -25,7 +25,7 @@ function ProgressBar({totalStep, nowStep}){
 
 const styles = StyleSheet.create({
     bar: {
-        width: SCREEN_WIDTH * 0.9,
+        width: SCREEN_WIDTH * 0.8,
         height: 20,
         backgroundColor: '#C2C2C2',
         textAlign: 'center',

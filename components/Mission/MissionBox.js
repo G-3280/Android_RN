@@ -16,6 +16,7 @@ import {
   Animated,
   TouchableOpacity,
 } from 'react-native';
+import firebase from "@react-native-firebase/app";
 
 import water from '../../assets/images/mission/water.png';
 
@@ -35,8 +36,8 @@ const styles = StyleSheet.create({
         }),
     },
     boxImage: {
-        width: 20,
-        width: 20,
+        width: 25,
+        width: 25,
     },
     textCategory: {
         color: '#A9A9A9',
@@ -51,15 +52,28 @@ const styles = StyleSheet.create({
 });
 
 function MissionScreen(props){
+    const currentUser = firebase.auth().currentUser;
+    const clickMission = async (e) => {
+        const {category, content} = props;
+        console.log(category, content);
+        console.log(currentUser.uid);
+    }
 
     return(
-        <View style={styles.container}>
-            <ImageBackground style={styles.boxImage} source={water}/>
+        <TouchableOpacity
+            style={styles.container}
+            onPress={clickMission}
+        >
+            <ImageBackground
+                style={styles.boxImage}
+                source={water}
+            />
             <Text style={styles.textCategory}>
                 {props.category}
             </Text>
+            <ImageBackground style={styles.boxImage} source={water}/>
             <Text style={styles.textContent}>{props.content}</Text>
-        </View>
+        </TouchableOpacity>
     );
 }
 

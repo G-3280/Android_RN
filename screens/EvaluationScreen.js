@@ -21,6 +21,8 @@ import water from '../assets/images/mission/water.png';
 import Tiger from '../assets/images/tiger.png';
 import redpandaCard from '../assets/images/RedpandaCard.png';
 
+import firestore from '@react-native-firebase/firestore';
+import firebase from "@react-native-firebase/app";
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
 

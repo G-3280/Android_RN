@@ -57,6 +57,15 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         color: 'white',
     },
+
+    signUpButton: {
+        marginTop: 20,
+    },
+
+    signUpText: {
+        fontSize: 15,
+        color: 'black',
+    },
 });
 
 function LoginScreen ({navigation}){
@@ -113,6 +122,10 @@ function LoginScreen ({navigation}){
 
     };
 
+    const handleSignUp = () => {
+        navigation.navigate("SignUp");
+    }
+
     return(
         <View style={styles.container}>
             <TextInput
@@ -133,6 +146,10 @@ function LoginScreen ({navigation}){
 
             <TouchableOpacity style={styles.loginButton} onPress={handleLogin}>
                 <Text style={styles.buttonText}>로그인</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity style={styles.signUpButton} onPress={handleSignUp}>
+                <Text style={styles.signUpText}>회원가입</Text>
             </TouchableOpacity>
         </View>
     );

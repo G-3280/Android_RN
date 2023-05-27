@@ -18,6 +18,9 @@ import {
   AppState,
 } from 'react-native';
 
+import firestore from '@react-native-firebase/firestore';
+import firebase from "@react-native-firebase/app";
+
 import MissionBox from '../components/Mission/MissionBox.js';
 import MissionBtn from '../components/Mission/MissionBtn.js';
 import MissionCategory from '../components/Mission/MissionCategory.js';
@@ -108,6 +111,11 @@ function MissionScreen({navigation}) {
     month: today.getMonth() + 1,
     date: today.getDate(),
   };
+  let currentDate = today.getDate();
+  let firstDate = new Date(today.setDate(1)).getDay();
+
+  const weekend = Math.ceil((currentDate + firstDate) / 7);
+
 
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
@@ -215,7 +223,7 @@ function MissionScreen({navigation}) {
           <View style={styles.titleContainer}>
             <Text style={styles.titleText}>{Week === true ? 'Today' : 'Week'}</Text>
             <Text style={styles.dateText}>
-              {time.month}월 {time.date}일
+              {time.month}월 {Week ? `${time.date}일` : `${weekend}주차`}
             </Text>
           </View>
 
@@ -253,17 +261,16 @@ function MissionScreen({navigation}) {
                 />
             </View>
 
-
             {category === '' ?
             (missionList
-                .map((mission) =>
-                    <MissionBox category={mission.category} content={mission.content}/>
+                .map((mission, idx) =>
+                    <MissionBox key={idx} category={mission.category} content={mission.content}/>
             ))
             :
             (missionList
                 .filter((mission) => mission.category === category)
-                .map((mission) =>
-                    <MissionBox category={mission.category} content={mission.content}/>
+                .map((mission, idx) =>
+                    <MissionBox key={idx} category={mission.category} content={mission.content}/>
             ))}
 
           </View>
