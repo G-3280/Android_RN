@@ -126,7 +126,9 @@ function LoginScreen ({navigation}){
               "userName" : nickname,
               "completedMission" : 0,
               "completedCard" : ["penguin", "redPanda", "penguin"],
-              "completedEvaluation" : 0
+              "completedEvaluation" : 0,
+              "nowCompletedMissionCount": 0,
+              "nowTotalMissionCount": 0,
           };
           console.log(user);
 

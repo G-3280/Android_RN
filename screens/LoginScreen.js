@@ -73,10 +73,12 @@ function LoginScreen ({navigation}){
     const [password, setPassword] = useState('');
 
     const [isLoggedIn, setIsLoggedIn] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
 
     const usersCollection = firestore().collection('users');
 
     const handleLogin = async () => {
+        setIsLoading(true);
         console.log(email, password);
         const info = {email, password};
 
@@ -84,6 +86,7 @@ function LoginScreen ({navigation}){
             const {user} = await signIn(info);
             const data = await usersCollection.get();
 
+            setIsLoading(false);
             console.log(user);
             // 닉네임 추출
             let userData = data._docs
@@ -127,7 +130,13 @@ function LoginScreen ({navigation}){
     }
 
     return(
-        <View style={styles.container}>
+    <>
+    {isLoading === true ?
+        (<View style={styles.container}>
+            <Text>로딩 중 ... </Text>
+        </View>)
+        :
+        (<View style={styles.container}>
             <TextInput
                 style={styles.input}
                 onChangeText={setEmail}
@@ -151,7 +160,9 @@ function LoginScreen ({navigation}){
             <TouchableOpacity style={styles.signUpButton} onPress={handleSignUp}>
                 <Text style={styles.signUpText}>회원가입</Text>
             </TouchableOpacity>
-        </View>
+        </View>)
+    }
+    </>
     );
 
 }
