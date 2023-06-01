@@ -21,7 +21,7 @@ import water from '../assets/images/mission/water.png';
 import Tiger from '../assets/images/tiger.png';
 import redpandaCard from '../assets/images/RedpandaCard.png';
 
-import firestore from '@react-native-firebase/firestore';
+import firestore, {doc, getDoc} from '@react-native-firebase/firestore';
 import firebase from "@react-native-firebase/app";
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
@@ -65,23 +65,46 @@ const styles = StyleSheet.create({
 
 
 function EvaluationScreen({navigation}){
+    const db = firebase.firestore();
 
     const [isLoggedIn, setIsLoggedIn] = useState(false);
+    const [uid, setUid] = useState(firebase.auth().currentUser?.uid);
+    const [imgName, setImgName] = useState([]);
 
     useEffect(() => {
         const currentUser = firebase.auth().currentUser;
         console.log(currentUser);
           if (currentUser === null) {
             setIsLoggedIn(false);
+            setUid(currentUser.uid);
+            console.log(`uid: ${uid}`);
             navigation.navigate("Login");
           } else {
             setIsLoggedIn(true);
-            console.log("로그인 상태인데 닉네임 없음");
           }
     }, [firebase.auth().currentUser]);
 
-    const onEveluationHandler = (e) => {
-        console.log(e);
+    const onEveluationHandler = async (e) => {
+        // 자신의 uid를 제외한 다른 유저들의 imageUrl을 배열에 담기
+        let missionDocuments = await db.collection("missionTest").get();
+        for (const docc of missionDocuments.docs) {
+            const userCollection = await docc.ref.collection("users").get();
+            userCollection.forEach((docc2) => {
+                  const userCollectionData = docc2.data();
+                  console.log(userCollectionData);
+                  console.log(`uid: ${uid}`);
+                  if (docc2.id !== uid) { // uid와 다른 필드만 출력
+                    console.log(`${docc2.id}:`, userCollectionData);
+                    if(userCollectionData.imageUrl !== ""){
+                        setImgName([...imgName, userCollectionData.imageUrl]);
+                    }
+                  }
+            });
+        }
+
+        navigation.navigate("EvaluationImg", {
+            imageUrl: imgName,
+        });
     };
 
     return (

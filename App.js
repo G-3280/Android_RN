@@ -44,12 +44,14 @@ import ProgressBar from './screens/ProgressBar';
 import HomeScreen from './screens/HomeScreen.js';
 import SettingScreen from './screens/SettingScreen';
 import EvaluationScreen from './screens/EvaluationScreen';
+import EvaluationImgScreen from './screens/EvaluationImgScreen';
 import DetailScreen from './screens/DetailScreen';
 import MissionScreen from './screens/MissionScreen';
 
 import LoginScreen from './screens/LoginScreen.js';
 import SignUpScreen from './screens/SignUpScreen.js';
 import SignUpCompeleteScreen from './screens/SignUpCompeleteScreen.js';
+import LoadingScreen from './screens/LoadingScreen.js';
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -88,8 +90,11 @@ const RootNavigator = () => {
             <Stack.Screen name="Login" component={LoginScreen} options={{ headerShown: false }} />
             <Stack.Screen name="SignUp" component={SignUpScreen}  />
             <Stack.Screen name="SignUpCompeleteScreen" component={SignUpCompeleteScreen} options={{headerShown: false}} />
+            <Stack.Screen name="Loading" component={LoadingScreen} options={{ headerShown: false }} />
 
             <Stack.Screen name="Detail" component={DetailScreen} />
+
+            <Stack.Screen name="EvaluationImg" component={EvaluationImgScreen} />
 
         </Stack.Navigator>
     )
