@@ -240,22 +240,28 @@ function MissionScreen({navigation}) {
 
             <View style={styles.categoryContainer}>
                 <MissionCategory
-                    category={category === 'food' ? true : false}
+                    btnOn={category === '' ? true : false}
+                    all={true}
+                    style={styles.categoryLogo}
+                    onHandler={(e) => setCategory('')}
+                />
+                <MissionCategory
+                    btnOn={category === 'food' ? true : false}
                     style={styles.categoryLogo}
                     onHandler={(e) => setCategory('food')}
                 />
                 <MissionCategory
-                    category={category === 'water' ? true : false}
+                    btnOn={category === 'water' ? true : false}
                     style={styles.categoryLogo}
                     onHandler={(e) => setCategory('water')}
                 />
                 <MissionCategory
-                    category={category === 'trash' ? true : false}
+                    btnOn={category === 'trash' ? true : false}
                     style={styles.categoryLogo}
                     onHandler={(e) => setCategory('trash')}
                 />
                 <MissionCategory
-                    category={category === 'electronic' ? true : false}
+                    btnOn={category === 'electronic' ? true : false}
                     style={styles.categoryLogo}
                     onHandler={(e) => setCategory('electronic')}
                 />

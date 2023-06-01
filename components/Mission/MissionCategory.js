@@ -27,27 +27,39 @@ const styles = StyleSheet.create({
         width: 25,
         height: 25,
     },
+    text:{
+        color: 'black',
+        fontSize: 17,
+    },
     container:{
         width: SCREEN_WIDTH * 0.16,
 
         paddingVertical: 7,
-        marginLeft: SCREEN_WIDTH * 0.045,
-        marginRight: SCREEN_WIDTH * 0.045,
+        marginLeft: SCREEN_WIDTH * 0.02,
+        marginRight: SCREEN_WIDTH * 0.02,
         borderRadius: 20,
         alignItems: 'center',
     }
 })
 function MissionCategory(props) {
     const onCategoryHandler = (e) => {
+        console.log(props);
         props.onHandler();
     };
     return(
     <View>
-        <TouchableOpacity  style={{...styles.container, backgroundColor: props.category ? '#C1F4C8' : '#FBFBFD'}} onPress={onCategoryHandler}>
-            <ImageBackground
+        <TouchableOpacity  style={{...styles.container, backgroundColor: props.btnOn ? '#C1F4C8' : '#FBFBFD'}} onPress={onCategoryHandler}>
+            {props.all ?
+            (<Text
+                style={styles.text}
+            >
+                ALL
+            </Text>)
+            :
+            (<ImageBackground
                 source={water}
                 style={styles.image}
-            />
+            />)}
         </TouchableOpacity>
     </View>
     )
