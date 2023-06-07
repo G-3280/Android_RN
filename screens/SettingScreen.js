@@ -23,7 +23,6 @@ import firebase from "@react-native-firebase/app";
 import firestore, {doc} from '@react-native-firebase/firestore';
 
 import water from '../assets/images/mission/water.png';
-import Tiger from '../assets/images/tiger.png';
 
 import mission from '../assets/images/history/Completed.png';
 import card from '../assets/images/history/Card.png';
@@ -117,19 +116,52 @@ const styles = StyleSheet.create({
 })
 
 function SettingScreen({navigation}){
+    const db = firebase.firestore();
+
     const [userName, setUserName] = useState('');
 
-    const [totalMission, setTotalMission] = useState(20);
-    const [completedMission, setCompletedMissioin] = useState(5);
+    const [totalMission, setTotalMission] = useState(10);
+    const [completedMission, setCompletedMissioin] = useState(0);
+
 
     const [userData, setUserData] = useState({});
     const [cardLength, setCardLength] = useState(0);
+    const [newCard, setNewCard] = useState(false); // 새 캐릭터 획득
     const [isLoggedIn, setIsLoggedIn] = useState(false);
+    const [uid, setUid] = useState('');
 
     const currentUser = firebase.auth().currentUser;
 
     console.log('currentUser ');
     console.log(currentUser);
+
+    // 카드 목록
+    let cardName = [
+            {
+                'species': 'redPanda',
+                'nickname': '호',
+                'name': '레서판다',
+                'explanation': `황제펭귄(Aptenodytes forsteri)은 지구상에 생존하는 모든 펭귄들 중에서 가장 키가 크고 체중이 많이 나가는 종이다.
+
+    서식지는 남극과 포클랜드 제도이다. 암컷과 수컷은 덩치와 깃털 무늬가 비슷하며, 성체는 최고 120센티미터에 몸무게는 23~45킬로그램까지 나간다. 등은 검고 가슴 부위는 창백한 노란색을 띠고 있으며 귀 부위는 밝은 노란색이다. 다른 펭귄들과 마찬가지로 황제펭귄은 날지 못한다. 이들은 해양 생활에 적합한 유선형의 몸매와 플리퍼(flipper)로 불리는 납작한 날개를 갖고 있다.`
+            },
+            {
+                'species': 'penguin',
+                'nickname': '뽀',
+                'name': '황제펭귄',
+                'explanation': `황제펭귄(Aptenodytes forsteri)은 지구상에 생존하는 모든 펭귄들 중에서 가장 키가 크고 체중이 많이 나가는 종이다.
+
+    서식지는 남극과 포클랜드 제도이다. 암컷과 수컷은 덩치와 깃털 무늬가 비슷하며, 성체는 최고 120센티미터에 몸무게는 23~45킬로그램까지 나간다. 등은 검고 가슴 부위는 창백한 노란색을 띠고 있으며 귀 부위는 밝은 노란색이다. 다른 펭귄들과 마찬가지로 황제펭귄은 날지 못한다. 이들은 해양 생활에 적합한 유선형의 몸매와 플리퍼(flipper)로 불리는 납작한 날개를 갖고 있다.`
+            },
+            {
+                'species': 'bear',
+                'nickname': '고미',
+                'name': '곰',
+                'explanation': `황제펭귄(Aptenodytes forsteri)은 지구상에 생존하는 모든 펭귄들 중에서 가장 키가 크고 체중이 많이 나가는 종이다.
+
+    서식지는 남극과 포클랜드 제도이다. 암컷과 수컷은 덩치와 깃털 무늬가 비슷하며, 성체는 최고 120센티미터에 몸무게는 23~45킬로그램까지 나간다. 등은 검고 가슴 부위는 창백한 노란색을 띠고 있으며 귀 부위는 밝은 노란색이다. 다른 펭귄들과 마찬가지로 황제펭귄은 날지 못한다. 이들은 해양 생활에 적합한 유선형의 몸매와 플리퍼(flipper)로 불리는 납작한 날개를 갖고 있다.`
+            }
+        ];
 
     useEffect(() => {
           if (currentUser === null) {
@@ -138,6 +170,7 @@ function SettingScreen({navigation}){
           } else {
             setIsLoggedIn(true);
             const uid = currentUser.uid;
+            setUid(currentUser.uid);
             const usersCollection = firestore().collection('users');
             usersCollection.doc(uid).get()
               .then((doc) => {
@@ -145,6 +178,15 @@ function SettingScreen({navigation}){
                   // 문서가 존재하는 경우 데이터에 접근
                   const data = doc.data();
                   console.log(data);
+                  if(data.nowCompletedMissionCount < 10){
+                    console.log(data.nowCompletedMissionCount);
+                    setCompletedMissioin(data.nowCompletedMissionCount);
+                  } else if(data.nowCompletedMissionCount === 10){
+                    console.log(data.nowCompletedMissionCount);
+                    setCompletedMissioin(data.nowCompletedMissionCount);
+                    setNewCard(true);
+
+                  }
                   setUserData(data);
                   setCardLength(data.completedCard.length);
                 } else {
@@ -157,7 +199,35 @@ function SettingScreen({navigation}){
               });
             console.log(usersCollection);
           }
-    }, [currentUser]);
+    }, []);
+
+    const getNewCard = async (e) => {
+        let usersDocuments = await db.collection("users").doc(uid).get();
+        console.log(usersDocuments.data());
+
+        // 새 캐릭터 획득 & 현재 미션 완료 횟수 0으로 갱신
+        const cardList = usersDocuments.data().completedCard;
+        cardList.push(cardName[cardList.length].species);
+        db.collection("users").doc(uid).update({
+            nowCompletedMissionCount: 0,
+            completedCard: cardList,
+        })
+
+        // 새 캐릭터 획득 알림창, home으로 이동
+        if(newCard === true){
+            Alert.alert(
+                '새 캐릭터 획득',
+                '새 캐릭터를 획득하셨습니다!',
+                [
+                    {text: '확인', onPress: () => {navigation.navigate("Home"),{
+                        newCard: true
+                    }}}
+                ]
+
+            );
+        }
+
+    };
 
 
 
@@ -187,13 +257,24 @@ function SettingScreen({navigation}){
             </View>
 
             <View style={styles.contentContainer}>
-                <View style={styles.missionProgress}>
+                {newCard === true ?
+                (<TouchableOpacity style={styles.missionProgress} onPress={getNewCard}>
+                     <View style={styles.textContainer}>
+                         <Text>{totalMission}회 중 {completedMission}회 미션 완료!</Text>
+                         <Text>새 캐릭터 획득까지 {totalMission - completedMission}회 남았습니다!</Text>
+                     </View>
+                     <ProgressBar totalStep={totalMission} nowStep={completedMission}/>
+                 </TouchableOpacity>
+                )
+                :
+                (<View style={styles.missionProgress}>
                     <View style={styles.textContainer}>
                         <Text>{totalMission}회 중 {completedMission}회 미션 완료!</Text>
                         <Text>새 캐릭터 획득까지 {totalMission - completedMission}회 남았습니다!</Text>
                     </View>
                     <ProgressBar totalStep={totalMission} nowStep={completedMission}/>
-                </View>
+                </View>)
+                }
 
                 <View style={styles.historyContainer}>
                     <Text style={styles.historyText}>히스토리</Text>

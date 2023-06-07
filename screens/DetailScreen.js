@@ -1,9 +1,9 @@
 import React from 'react';
 import {Text,ScrollView, View, ImageBackground, StyleSheet, Dimensions} from 'react-native';
-import Tiger from '../assets/images/tiger.png';
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
 
+import panda from '../assets/images/card/RedpandaCard.png';
 
 const styles = StyleSheet.create({
     container: {
@@ -62,7 +62,7 @@ function DetailScreen(props){
                 contentContainerStyle={styles.card_scroll}
             >
                 <ImageBackground
-                    source={Tiger}
+                    source={panda}
                     style={styles.image}
                     imageStyle={{borderRadius: 20}}
                 />

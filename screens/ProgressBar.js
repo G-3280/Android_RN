@@ -39,6 +39,7 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         fontSize: 15,
         textAlign: 'center',
+        marginRight: SCREEN_WIDTH * 0.05,
     },
 })
 
