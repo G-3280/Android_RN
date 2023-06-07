@@ -95,8 +95,8 @@ const RootNavigator = () => {
 
             <Stack.Screen name="Detail" component={DetailScreen} />
 
-            <Stack.Screen name="EvaluationImg" component={EvaluationImgScreen} />
-            <Stack.Screen name="EvaluationComplete" component={EvaluationImgScreen} />
+            <Stack.Screen name="EvaluationImg" component={EvaluationImgScreen} options={{ headerShown: false }}/>
+            <Stack.Screen name="EvaluationComplete" component={EvaluationImgScreen} options={{ headerShown: false }}/>
 
         </Stack.Navigator>
     )

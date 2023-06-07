@@ -11,6 +11,7 @@ import { getStorage, ref, getDownloadURL } from "@react-native-firebase/storage"
 const styles = StyleSheet.create({
     container: {
         backgroundColor: 'white',
+        height: SCREEN_HEIGHT * 1,
     },
     category:{
         marginTop: 20,
@@ -56,7 +57,44 @@ const styles = StyleSheet.create({
     },
     negativeText: {
         color: 'white',
-    }
+    },
+
+
+    textWrapper: {
+        flex: 3,
+        width: '100%',
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+
+    contentText: {
+        fontSize: 18,
+        fontWeight: 'bold',
+        color: 'black',
+    },
+
+    btnContainer:{
+        flex: 1,
+        width: '100%',
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+
+    loginButton: {
+        height: 53,
+        width: '80%',
+        marginTop: 24,
+        backgroundColor: '#34E18B',
+        borderRadius: 15,
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+
+    buttonText: {
+        fontSize: 18,
+        fontWeight: 'bold',
+        color: 'white',
+    },
 });
 
 function EvaluationImgScreen({navigation, route}){
@@ -96,7 +134,8 @@ function EvaluationImgScreen({navigation, route}){
 
     // params로 받은 imageUrl 세팅
     useEffect(() => {
-    if(imageName.length === 0 && route.params !== null){
+    console.log(route);
+    if(imageName.length === 0 && route.params !== undefined){
         setImageName(route.params.imageUrl);
     }
     }, [route]);
@@ -104,22 +143,26 @@ function EvaluationImgScreen({navigation, route}){
 
     // storage에서 이미지 불러오기
     useEffect(() => {
-        console.log(imgIdx);
-        const imagePath = route.params.imageUrl[imgIdx]; // 이미지가 저장된 경로
-        setImageUrl(route.params.imageUrl[imgIdx]);
+        if(evaluCnt < 10 && imageName.length > 0){
+            console.log(imgIdx);
+            const imagePath = imageName[imgIdx]; // 이미지가 저장된 경로
+            setImageUrl(imageName[imgIdx]);
 
-        const imageRef = storage.ref().child(imagePath);
-        imageRef
-          .getDownloadURL()
-          .then((url) => {
-            // 이미지 다운로드 URL 사용
-            console.log('Image URL:', url);
-            setImageUrl(url);
-          })
-          .catch((error) => {
-            // 이미지 다운로드 중 에러 처리
-            console.error('Error downloading image:', error);
-          });
+            const imageRef = storage.ref().child(imagePath);
+            imageRef
+              .getDownloadURL()
+              .then((url) => {
+                // 이미지 다운로드 URL 사용
+                console.log('Image URL:', url);
+                setImageUrl(url);
+              })
+              .catch((error) => {
+                // 이미지 다운로드 중 에러 처리
+                console.error('Error downloading image:', error);
+              });
+          } else if(evaluCnt === 10){
+            goCompleted();
+          }
       }, [imageName, imgIdx]);
 
       const onHandlerPositiveBtn = async () => {
@@ -127,19 +170,20 @@ function EvaluationImgScreen({navigation, route}){
         if(evaluCnt < 10){
             setEvaluCnt((prev) => prev + 1);
         } else {
-            navigation.navigate("EvaluationComplete");
+            goCompleted();
+            return;
         }
         console.log(evaluCnt);
 
         // missionTest 컬렉션의 users 컬렉션 내부의 uid 필드에 유저 uid 추가
         let missionDocuments = await db.collection("missionTest").get();
         for (const docc of missionDocuments.docs) {
-            console.log(route.params.imageUrl[imgIdx]);
-            const userCollection = await docc.ref.collection("users").where("imageUrl", "==", route.params.imageUrl[imgIdx]).get();
+            console.log(imageName[imgIdx]);
+            const userCollection = await docc.ref.collection("users").where("imageUrl", "==", imageName[imgIdx]).get();
 
 
             userCollection.forEach(async (docc2) => {
-                if(docc2.data().imageUrl === route.params.imageUrl[imgIdx]){
+                if(docc2.data().imageUrl === imageName[imgIdx]){
                     console.log('title: ');
                     console.log(docc.data().title);
                     await setImgTitle(docc.data().title);
@@ -172,7 +216,7 @@ function EvaluationImgScreen({navigation, route}){
             })
         }
 
-        if(imgIdx < route.params.imageUrl.length - 1){
+        if(imgIdx < imageName.length - 1){
         // imgIdx 하나 증가시키고 이미지 또 불러오기
             setImgIdx((prev) => prev + 1);
         } else{
@@ -185,10 +229,9 @@ function EvaluationImgScreen({navigation, route}){
         if(evaluCnt < 10){
             setEvaluCnt((prev) => prev + 1);
         } else {
-            navigation.navigate("SignUpCompeleteScreen");
-
             // 평가 완료 횟수 증가
-            useEffect(() => {
+            const currentUser = firebase.auth().currentUser;
+                const checkUser = async () => {
                 if (currentUser === null) {
                   setIsLoggedIn(false);
                   navigation.navigate("Login");
@@ -196,7 +239,7 @@ function EvaluationImgScreen({navigation, route}){
                   setIsLoggedIn(true);
                   const uid = currentUser.uid;
 
-                  const usersCollection = firestore().collection('users');
+                  const usersCollection = await firestore().collection('users');
                   usersCollection.doc(uid).get()
                     .then((doc) => {
                       if (doc.exists) {
@@ -210,7 +253,6 @@ function EvaluationImgScreen({navigation, route}){
                         db.collection("users").doc(uid).update({
                             completedEvaluation: tmpEvaCnt + 1,
                         })
-
                       } else {
                         // 문서가 존재하지 않는 경우
                         console.log('문서가 존재하지 않습니다.');
@@ -221,11 +263,15 @@ function EvaluationImgScreen({navigation, route}){
                     });
                   console.log(usersCollection);
                 }
-              }, []);
+            }
+            checkUser();
+
+            goCompleted();
+            return;
         }
         console.log(evaluCnt);
 
-        if(imgIdx < route.params.imageUrl.length - 1){
+        if(imgIdx < imageName.length - 1){
         // imgIdx 하나 증가시키고 이미지 또 불러오기
             setImgIdx((prev) => prev + 1);
         } else{
@@ -234,8 +280,33 @@ function EvaluationImgScreen({navigation, route}){
 
       }
 
+      const goCompleted = () => {
+        navigation.navigate("EvaluationComplete");
+      }
+
+      const signUpSubmit = async () => {
+              navigation.navigate("Evaluation");
+          };
+
     return (
-        <View style={styles.container}>
+    <>
+    {evaluCnt === 10 ?
+        (<View style={styles.container}>
+
+             <View style={styles.textWrapper}>
+                 <Text style={styles.contentText}>평가를</Text>
+                 <Text style={styles.contentText}>완료했습니다!</Text>
+             </View>
+
+             <View style={styles.btnContainer}>
+                 <TouchableOpacity style={styles.loginButton} onPress={signUpSubmit}>
+                     <Text style={styles.buttonText}>완료</Text>
+                 </TouchableOpacity>
+             </View>
+         </View>
+        )
+    :
+        (<View style={styles.container}>
             <ScrollView
                 indicatorStyle='black'
                 contentContainerStyle={styles.card_scroll}
@@ -261,7 +332,9 @@ function EvaluationImgScreen({navigation, route}){
                     </TouchableOpacity>
                 </View>
             </ScrollView>
-        </View>
+        </View>)
+    }
+    </>
     )
 }
 

@@ -33,6 +33,7 @@ const styles = StyleSheet.create({
         backgroundColor: 'white',
         alignItems: 'center',
         justifyContent: 'center',
+        height: SCREEN_HEIGHT * 1,
     },
 
     textWrapper: {
@@ -74,13 +75,11 @@ const styles = StyleSheet.create({
 
 function EvaluationCompleteScreen ({navigation}){
 
-
+    console.log('completed 화면 입장!');
 
     const signUpSubmit = async () => {
         navigation.navigate("Evaluation");
-      };
-
-
+    };
 
     return(
         <View style={styles.container}>
