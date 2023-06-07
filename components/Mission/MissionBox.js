@@ -16,6 +16,7 @@ import {
   Animated,
   TouchableOpacity,
   PermissionsAndroid,
+  Alert
 } from 'react-native';
 
 import firebase from "@react-native-firebase/app";
@@ -24,10 +25,14 @@ import { getStorage, ref } from "@react-native-firebase/storage";
 
 import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
 
-import water from '../../assets/images/mission/water.png';
-
+import water from '../../assets/images/mission/seleted_water.png';
+import food from '../../assets/images/mission/seleted_food.png';
+import electricity from '../../assets/images/mission/seleted_eletricity.png';
+import recycle from '../../assets/images/mission/seleted_recycle.png';
+import check from '../../assets/images/mission/missionCompleted.png';
 const styles = StyleSheet.create({
     container:{
+
         backgroundColor: 'white',
         width: '90%',
         marginBottom: 10,
@@ -41,10 +46,23 @@ const styles = StyleSheet.create({
             },
         }),
     },
-    boxImage: {
-        width: 25,
-        width: 25,
+    mainWrapper: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
     },
+    boxWrapper: {
+        flexDirection: 'row',
+    },
+    titleWrapper: {
+        flexDirection: 'row',
+    },
+
+    imgBox: {
+        width: 20,
+        height: 20,
+        marginRight: 5,
+    },
+
     textCategory: {
         color: '#A9A9A9',
         fontSize: 15,
@@ -54,14 +72,21 @@ const styles = StyleSheet.create({
         color: 'black',
         fontSize: 18,
         fontWeight: 'bold',
+    },
+
+    checkImg: {
+        width: 50,
+        height: 50,
     }
 });
 
-function MissionScreen(props){
+function MissionBox(props){
     const db = firebase.firestore();
     const storage = getStorage();
 
     const [response, setResponse] = useState(null);
+
+    const [isDone, setIsDone] = useState(false);
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [uid, setUid] = useState('');
     const [imgName, setImgName] = useState('');
@@ -144,6 +169,8 @@ function MissionScreen(props){
 
         await fileRef.put(blob);
 
+
+
         toStorageMission();
         return;
     }
@@ -163,6 +190,24 @@ function MissionScreen(props){
 
             }
         }
+        Alert.alert('업로드 완료', '업로드를 완료했습니다.', [
+          {
+            text: '확인',
+            onPress: () => console.log('Cancel Pressed'),
+          },
+        ]);
+
+        // 완료 미션 수 갱신
+        let usersDocuments = await db.collection("users").doc(uid).get();
+        const prevMissionCnt = usersDocuments.data().nowCompletedMissionCount;
+        const prevCompletedMis = usersDocuments.data().completedMission;
+        console.log(usersDocuments);
+        db.collection("users").doc(uid).update({
+            nowCompletedMissionCount: prevMissionCnt + 1,
+            completedMission: prevCompletedMis + 1,
+        })
+
+        setIsDone(true);
 
     }
 
@@ -171,17 +216,31 @@ function MissionScreen(props){
             style={styles.container}
             onPress={clickMission}
         >
-            <ImageBackground
-                style={styles.boxImage}
-                source={water}
-            />
-            <Text style={styles.textCategory}>
-                {props.category}
-            </Text>
-            <ImageBackground style={styles.boxImage} source={water}/>
-            <Text style={styles.textContent}>{props.content}</Text>
+        <View style={styles.mainWrapper}>
+            <View>
+                <View style={styles.boxWrapper}>
+                    <ImageBackground
+                         style={styles.titleWrapper}
+                    >
+                        <Image source={water} style={styles.imgBox} />
+                        <Text style={styles.textCategory}>
+                            {props.title}
+                        </Text>
+                    </ImageBackground>
+
+                </View>
+                <Text style={styles.textContent}>{props.content}</Text>
+            </View>
+            {isDone &&
+            (<View>
+                <ImageBackground>
+                    <Image source={check} style={styles.checkImg}/>
+                </ImageBackground>
+            </View>)
+            }
+        </View>
         </TouchableOpacity>
     );
 }
 
-export default MissionScreen;
+export default MissionBox;

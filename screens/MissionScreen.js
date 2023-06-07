@@ -89,8 +89,8 @@ const styles = StyleSheet.create({
 
     },
 
-    categoryLogo: {
-
+    text: {
+        color: 'black',
     },
 
     categoryContainer:{
@@ -136,7 +136,7 @@ function MissionScreen({navigation}) {
 
   const [working, setWorking] = useState(false);
   const [Week, setWeek] = useState(false);
-  const [category, setCategory] = useState('');
+  const [category, setCategory] = useState('all');
   const [memo, setMemo] = useState('');
 
   // 일일 미션 인덱스 리스트
@@ -192,7 +192,7 @@ function MissionScreen({navigation}) {
       }else if(Week === false && id === 'daily'){ // 주간 미션 -> 일일 미션
           setWeek(true);
       }
-      setCategory('');
+      setCategory('all');
   }
 
 
@@ -201,21 +201,45 @@ function MissionScreen({navigation}) {
   const missionList = [
     {
         'category': 'food',
-        'content': '음식 다 먹기'
+        'title': '잔반 줄이기',
+        'content': '밥을 다 먹어봐요!',
     },
     {
         'category': 'water',
-        'content': '물 아껴 쓰기'
+        'title': '물 아껴 쓰기',
+        'content': '양치 컵에 물을 받아서 양치해요!'
     },
     {
-        'category': 'trash',
-        'content': '쓰레기 제대로 버리기'
+        'category': 'recycle',
+        'title': '쓰레기 줄이기',
+        'content': '쓰레기에 묻은 음식을 닦아 버려봐요!',
     },
     {
         'category': 'electronic',
-        'content': '전기 아껴 쓰기'
+        'title': '전기 아껴쓰기',
+        'content': '안 쓰는 콘센트를 뽑아봐요!',
     }
   ]
+
+  // category 목록
+  const categoryList = [
+    {
+        'category': 'all',
+    },
+    {
+        'category': 'food',
+    },
+    {
+        'category': 'water',
+    },
+    {
+        'category': 'recycle',
+    },
+    {
+        'category': 'electronic',
+    },
+  ]
+
 
   return (
     <View style={styles.container}>
@@ -230,53 +254,37 @@ function MissionScreen({navigation}) {
           <View style={styles.missionContainer}>
             <View style={styles.btnContainer}>
               <TouchableOpacity key={'1'} style={{...styles.btnText, backgroundColor: Week ? "#9AEDA5" : 'white'}} onPress={(e) => {onPressHandler('daily')}}>
-                <Text>일일 미션</Text>
+                <Text style={styles.text}>일일 미션</Text>
               </TouchableOpacity>
 
               <TouchableOpacity key={'2'} style={{...styles.btnText, backgroundColor: !Week ? "#9AEDA5" : 'white'}} onPress={(e) => {onPressHandler('week')}}>
-                <Text>주간 미션</Text>
+                <Text style={styles.text}>주간 미션</Text>
               </TouchableOpacity>
             </View>
 
             <View style={styles.categoryContainer}>
-                <MissionCategory
-                    btnOn={category === '' ? true : false}
-                    all={true}
-                    style={styles.categoryLogo}
-                    onHandler={(e) => setCategory('')}
-                />
-                <MissionCategory
-                    btnOn={category === 'food' ? true : false}
-                    style={styles.categoryLogo}
-                    onHandler={(e) => setCategory('food')}
-                />
-                <MissionCategory
-                    btnOn={category === 'water' ? true : false}
-                    style={styles.categoryLogo}
-                    onHandler={(e) => setCategory('water')}
-                />
-                <MissionCategory
-                    btnOn={category === 'trash' ? true : false}
-                    style={styles.categoryLogo}
-                    onHandler={(e) => setCategory('trash')}
-                />
-                <MissionCategory
-                    btnOn={category === 'electronic' ? true : false}
-                    style={styles.categoryLogo}
-                    onHandler={(e) => setCategory('electronic')}
-                />
+            {(categoryList
+                .map((mission, idx) =>
+                    <MissionCategory
+                        key={idx}
+                        misCategory={mission.category}
+                        btnOn={category === mission.category ? true : false}
+                        style={styles.categoryLogo}
+                        onHandler={(e) => setCategory(mission.category)}
+                    />
+            ))}
             </View>
 
-            {category === '' ?
+            {category === 'all' ?
             (missionList
                 .map((mission, idx) =>
-                    <MissionBox key={idx} category={mission.category} content={mission.content}/>
+                    <MissionBox key={idx} category={mission.category} title={mission.title} content={mission.content}/>
             ))
             :
             (missionList
                 .filter((mission) => mission.category === category)
                 .map((mission, idx) =>
-                    <MissionBox key={idx} category={mission.category} content={mission.content}/>
+                    <MissionBox key={idx} category={mission.category} title={mission.title} content={mission.content}/>
             ))}
 
           </View>

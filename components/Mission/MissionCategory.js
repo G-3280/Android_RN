@@ -1,4 +1,4 @@
-import React, {Component, useState} from 'react';
+import React, {Component, useState, useEffect} from 'react';
 import type {Node} from 'react';
 import {
   SafeAreaView,
@@ -17,7 +17,15 @@ import {
   TouchableOpacity,
 } from 'react-native';
 
-import water from '../../assets/images/mission/water.png';
+import notWater from '../../assets/images/mission/not_seleted_water.png';
+import notFood from '../../assets/images/mission/not_seleted_food.png';
+import notElectricity from '../../assets/images/mission/not_seleted_eletricity.png';
+import notRecycle from '../../assets/images/mission/not_seleted_recycle.png';
+
+import water from '../../assets/images/mission/seleted_water.png';
+import food from '../../assets/images/mission/seleted_food.png';
+import electricity from '../../assets/images/mission/seleted_eletricity.png';
+import recycle from '../../assets/images/mission/seleted_recycle.png';
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
 
@@ -42,14 +50,33 @@ const styles = StyleSheet.create({
     }
 })
 function MissionCategory(props) {
+    console.log(props);
     const onCategoryHandler = (e) => {
-        console.log(props);
         props.onHandler();
     };
+
+    const [selectedImg, setSelectedImg] = useState('');
+    const [notSelectedImg, setNotSelectedImg] = useState('');
+
+    useEffect(() => {
+        if(props.misCategory === 'water'){
+            setSelectedImg(water);
+            setNotSelectedImg(notWater);
+        } else if(props.misCategory === 'food'){
+              setSelectedImg(food);
+              setNotSelectedImg(notFood);
+        } else if(props.misCategory === 'electronic'){
+            setSelectedImg(electricity);
+            setNotSelectedImg(notElectricity);
+        } else if(props.misCategory === 'recycle'){
+              setSelectedImg(recycle);
+              setNotSelectedImg(notRecycle);
+        }
+    }, [props]);
     return(
     <View>
         <TouchableOpacity  style={{...styles.container, backgroundColor: props.btnOn ? '#C1F4C8' : '#FBFBFD'}} onPress={onCategoryHandler}>
-            {props.all ?
+            {props.misCategory === 'all'?
             (<Text
                 style={styles.text}
             >
@@ -57,7 +84,7 @@ function MissionCategory(props) {
             </Text>)
             :
             (<ImageBackground
-                source={water}
+                source={props.btnOn === true ? selectedImg : notSelectedImg}
                 style={styles.image}
             />)}
         </TouchableOpacity>
