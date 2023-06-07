@@ -36,7 +36,7 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 
 
-import panda from './assets/images/RedpandaCard.png';
+import panda from './assets/images/card/RedpandaCard.png';
 
 import TapButton from './screens/TapButton';
 import ProgressBar from './screens/ProgressBar';
@@ -45,6 +45,7 @@ import HomeScreen from './screens/HomeScreen.js';
 import SettingScreen from './screens/SettingScreen';
 import EvaluationScreen from './screens/EvaluationScreen';
 import EvaluationImgScreen from './screens/EvaluationImgScreen';
+import EvaluationCompleteScreen from './screens/EvaluationCompleteScreen.js';
 import DetailScreen from './screens/DetailScreen';
 import MissionScreen from './screens/MissionScreen';
 
@@ -73,7 +74,7 @@ function MyTabs(){
 
 const BottomTabNavigator = () => {
     return (
-        <Tab.Navigator>
+        <Tab.Navigator screenOptions={{ headerShown: false }}>
             <Tab.Screen name="Home" component={HomeScreen} />
             <Tab.Screen name="Mission" component={MissionScreen} />
             <Tab.Screen name="Evaluation" component={EvaluationScreen} />
@@ -95,6 +96,7 @@ const RootNavigator = () => {
             <Stack.Screen name="Detail" component={DetailScreen} />
 
             <Stack.Screen name="EvaluationImg" component={EvaluationImgScreen} />
+            <Stack.Screen name="EvaluationComplete" component={EvaluationImgScreen} />
 
         </Stack.Navigator>
     )

@@ -18,8 +18,7 @@ import {
 } from 'react-native';
 
 import water from '../assets/images/mission/water.png';
-import Tiger from '../assets/images/tiger.png';
-import redpandaCard from '../assets/images/RedpandaCard.png';
+import redpandaCard from '../assets/images/card/RedpandaCard.png';
 
 import firestore, {doc, getDoc} from '@react-native-firebase/firestore';
 import firebase from "@react-native-firebase/app";
@@ -69,7 +68,7 @@ function EvaluationScreen({navigation}){
 
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [uid, setUid] = useState(firebase.auth().currentUser?.uid);
-    const [imgName, setImgName] = useState([]);
+    const imgName = [];
 
     useEffect(() => {
         const currentUser = firebase.auth().currentUser;
@@ -88,19 +87,24 @@ function EvaluationScreen({navigation}){
         // 자신의 uid를 제외한 다른 유저들의 imageUrl을 배열에 담기
         let missionDocuments = await db.collection("missionTest").get();
         for (const docc of missionDocuments.docs) {
+            // users 컬렉션 가져오기
             const userCollection = await docc.ref.collection("users").get();
-            userCollection.forEach((docc2) => {
+            userCollection.forEach(async (docc2) => {
                   const userCollectionData = docc2.data();
                   console.log(userCollectionData);
                   console.log(`uid: ${uid}`);
                   if (docc2.id !== uid) { // uid와 다른 필드만 출력
                     console.log(`${docc2.id}:`, userCollectionData);
-                    if(userCollectionData.imageUrl !== ""){
-                        setImgName([...imgName, userCollectionData.imageUrl]);
+                    if(userCollectionData.imageUrl !== "" && imgName.length < 10){
+                        console.log("imgName에 추가됨");
+                        console.log(userCollectionData.imageUrl);
+                        await imgName.push(userCollectionData.imageUrl);
+                        console.log(imgName);
                     }
                   }
             });
         }
+        console.log(imgName);
 
         navigation.navigate("EvaluationImg", {
             imageUrl: imgName,
@@ -109,7 +113,7 @@ function EvaluationScreen({navigation}){
 
     return (
         <View style={styles.container}>
-            <Image source={Tiger} style={styles.image}/>
+            <Image source={redpandaCard} style={styles.image}/>
 
             <View style={styles.textContainer}>
                 <Text style={styles.text}>다른 사람들의</Text>
