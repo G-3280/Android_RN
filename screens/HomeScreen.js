@@ -18,9 +18,11 @@ import {
 } from 'react-native';
 
 import Card from '../components/Home/Card';
-import panda from '../assets/images/RedpandaCard.png';
+import panda from '../assets/images/card/RedpandaCard.png';
+
 import auth from '@react-native-firebase/auth';
 import firebase from "@react-native-firebase/app";
+import firestore, {doc} from '@react-native-firebase/firestore';
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
 
@@ -85,6 +87,7 @@ const styles = StyleSheet.create({
 })
 
 function HomeScreen({navigation, route}){
+    const db = firebase.firestore();
     console.log(route);
 
     let cardName = [
@@ -105,9 +108,9 @@ function HomeScreen({navigation, route}){
 서식지는 남극과 포클랜드 제도이다. 암컷과 수컷은 덩치와 깃털 무늬가 비슷하며, 성체는 최고 120센티미터에 몸무게는 23~45킬로그램까지 나간다. 등은 검고 가슴 부위는 창백한 노란색을 띠고 있으며 귀 부위는 밝은 노란색이다. 다른 펭귄들과 마찬가지로 황제펭귄은 날지 못한다. 이들은 해양 생활에 적합한 유선형의 몸매와 플리퍼(flipper)로 불리는 납작한 날개를 갖고 있다.`
         },
         {
-            'species': 'koala',
-            'nickname': '코',
-            'name': '코알라',
+            'species': 'bear',
+            'nickname': '고미',
+            'name': '곰',
             'explanation': `황제펭귄(Aptenodytes forsteri)은 지구상에 생존하는 모든 펭귄들 중에서 가장 키가 크고 체중이 많이 나가는 종이다.
 
 서식지는 남극과 포클랜드 제도이다. 암컷과 수컷은 덩치와 깃털 무늬가 비슷하며, 성체는 최고 120센티미터에 몸무게는 23~45킬로그램까지 나간다. 등은 검고 가슴 부위는 창백한 노란색을 띠고 있으며 귀 부위는 밝은 노란색이다. 다른 펭귄들과 마찬가지로 황제펭귄은 날지 못한다. 이들은 해양 생활에 적합한 유선형의 몸매와 플리퍼(flipper)로 불리는 납작한 날개를 갖고 있다.`
@@ -115,42 +118,63 @@ function HomeScreen({navigation, route}){
     ];
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [nickname, setNickname] = useState('');
+    const [card, setCard] = useState([]);
     const [completedCard, setCompletedCard] = useState([]);
+    const [uid, setUid] = useState('');
 
+    // 로그인 여부 확인
+    const currentUser = firebase.auth().currentUser;
     useEffect(() => {
-        const currentUser = firebase.auth().currentUser;
-        console.log(currentUser);
-          if (currentUser !== null) {
-            setIsLoggedIn(true);
-
-          } else {
-            setIsLoggedIn(false);
-            navigation.navigate("Login");
-            setNickname("");
-          }
-    }, [firebase.auth().currentUser]);
-
-    useEffect(() => {
-      const updateUserInfo = async () => {
-        if (route.params) {
-          console.log(route.params);
-          setNickname(route.params.nickname);
-
-          if(route.params.card.length !== 0 && completedCard.length === 0){
-              let minCard = route.params.card;
-              minCard.forEach((card, index) => {
-                const matchingIndex = cardName.findIndex((cardInfo) => card === cardInfo.species);
-                if (matchingIndex !== -1) {
-                  setCompletedCard((prevCompletedCard) => [...prevCompletedCard, matchingIndex]);
-                }
-              });
-          }
+      const checkLoggedIn = async () => {
+        if (currentUser !== null) {
           setIsLoggedIn(true);
+        } else {
+          setIsLoggedIn(false);
+          navigation.navigate("Login");
         }
       };
 
-      updateUserInfo();
-    }, [route.params]);
+      checkLoggedIn();
+    }, []);
+
+    // 유저 정보 셋팅
+    useEffect(() => {
+        console.log('isLoggedIn 값 변경');
+
+        console.log(route.params);
+        if(isLoggedIn === true){
+            console.log(isLoggedIn);
+
+            // 카드 목록 받아오기
+            const uidTmp = currentUser.uid;
+            setUid(currentUser.uid);
+
+            const fetchData = async () => {
+                let getUsers = await db.collection("users").doc(uidTmp).get();
+                console.log('getUsers.data: ');
+                console.log(getUsers.data());
+
+                const cardList = getUsers.data().completedCard;
+                setCard(getUsers.data().completedCard);
+                setNickname(getUsers.data().userName);
+
+                if(cardList.length !== 0 && completedCard.length === 0){
+                  cardList.forEach((c, index) => {
+                    const matchingIndex = cardName.findIndex((cardInfo) => c === cardInfo.species);
+                    if (matchingIndex !== -1) {
+                      setCompletedCard((prevCompletedCard) => [...prevCompletedCard, matchingIndex]);
+                    }
+                  });
+                }
+            }
+
+            fetchData();
+        }
+
+    }, [isLoggedIn]);
+
+
+
 
     console.log(completedCard);
     const checkLoggedIn = () => {
