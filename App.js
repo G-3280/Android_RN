@@ -35,6 +35,16 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 
+// tab bar icons
+import evaluation from './assets/images/bar/evaluation.png';
+import home from './assets/images/bar/home.png';
+import mission from './assets/images/bar/mission.png';
+import setting from './assets/images/bar/setting.png';
+
+import evaluationFill from './assets/images/bar/evaluationFill.png';
+import homeFill from './assets/images/bar/homeFill.png';
+import missionFill from './assets/images/bar/missionFill.png';
+import settingFill from './assets/images/bar/settingFill.png';
 
 import panda from './assets/images/card/RedpandaCard.png';
 
@@ -75,10 +85,115 @@ function MyTabs(){
 const BottomTabNavigator = () => {
     return (
         <Tab.Navigator screenOptions={{ headerShown: false }}>
-            <Tab.Screen name="Home" component={HomeScreen} />
-            <Tab.Screen name="Mission" component={MissionScreen} />
-            <Tab.Screen name="Evaluation" component={EvaluationScreen} />
-            <Tab.Screen name="Setting" component={SettingScreen} />
+            <Tab.Screen
+                name="홈"
+                component={HomeScreen}
+                options={{
+                    tabBarIcon: ({focused}) => {
+
+                        return (
+                        <>
+                            {focused === true ?
+                            (<View>
+                                <Image
+                                    source={homeFill}
+                                    style={{width: 20, height: 20}}
+                                />
+                            </View>)
+                            :
+                            (<View>
+                                <Image
+                                    source={home}
+                                    style={{width: 20, height: 20}}
+                                />
+                            </View>)
+                            }
+                            </>
+                        )
+                    }
+                }}
+            />
+            <Tab.Screen
+                name="미션"
+                component={MissionScreen}
+                options={{
+                    tabBarIcon: ({focused}) => {
+                        return (
+                        <>
+                        {focused === true ?
+                            (<View>
+                                <Image
+                                    source={missionFill}
+                                    style={{width: 20, height: 18}}
+                                />
+                            </View>)
+                            :
+                            (<View>
+                                <Image
+                                    source={mission}
+                                    style={{width: 20, height: 18}}
+                                />
+                            </View>)
+                        }
+                        </>
+                        )
+                    }
+                }}
+            />
+            <Tab.Screen
+                name="평가"
+                component={EvaluationScreen}
+                options={{
+                    tabBarIcon: ({focused}) => {
+                        return (
+                        <>
+                        {focused === true ?
+                            (<View>
+                                <Image
+                                    source={evaluationFill}
+                                    style={{width: 17, height: 23}}
+                                />
+                            </View>)
+                            :
+                            (<View>
+                                <Image
+                                    source={evaluation}
+                                    style={{width: 17, height: 23}}
+                                />
+                            </View>)
+                        }
+                        </>
+                        )
+                    }
+                }}
+            />
+            <Tab.Screen
+                name="더보기"
+                component={SettingScreen}
+                options={{
+                    tabBarIcon: ({focused}) => {
+                        return (
+                        <>
+                        {focused === true ?
+                            (<View>
+                                <Image
+                                    source={settingFill}
+                                    style={{width: 25, height: 4}}
+                                />
+                            </View>)
+                            :
+                            (<View>
+                                <Image
+                                    source={setting}
+                                    style={{width: 25, height: 4}}
+                                />
+                            </View>)
+                        }
+                        </>
+                        )
+                    }
+                }}
+            />
         </Tab.Navigator>
     )
 }
